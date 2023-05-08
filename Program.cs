@@ -123,14 +123,14 @@ internal class Program
         
 
         Console.WriteLine($"Введите имя, введите телефон в формате +7ХХХХХХХХХХ и введите электронную почту через пробел ");
-        data = Console.ReadLine();
+        data = Console.ReadLine(); // считали данные
         MatchCollection matchFindName = regName.Matches(data);
-        name = matchFindName[0].ToString();  
+        name = matchFindName[0].ToString();  //записали name
         MatchCollection matchFindPhone = regPhone.Matches(data);
-        phone = matchFindPhone[0].ToString();
-      
+        phone = matchFindPhone[0].ToString();//записали телефон
+
         MatchCollection matchFindMail = regMail.Matches(data);
-        mail = matchFindPhone[0].ToString();
+        mail = matchFindPhone[0].ToString();//записали почту
         Console.WriteLine("Выведем записанные данные");
         Console.WriteLine($"Записали данные{name}, {phone}, {mail}");
         string all_data = $"'{name}','{phone}','{mail}'";
