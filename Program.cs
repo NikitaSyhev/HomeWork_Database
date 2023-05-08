@@ -111,7 +111,8 @@ internal class Program
         putText += Print;
         putText += WriteToFile;
 
-
+        //1) Используя пример с занятия и прошлое ДЗ реализовать запись в базу данных таких полей,
+        //как имя, адрес эл.почты и телефон. 
         string data; // объявили 4 переменные, data для считывания введеных данных, осальные - для записи
         string name;
         string phone;
@@ -119,9 +120,8 @@ internal class Program
         Regex regPhone = new Regex(@"^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$"); // создаем регексы
         Regex regName = new Regex(@"^[a-zA-Z]+$");
         Regex regMail = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-        do
-        {
-            Console.WriteLine($"Введите имя: ");
+
+        Console.WriteLine($"Введите имя: ");
             data = Console.ReadLine();
             MatchCollection matchFindName = regName.Matches(data);
             name = matchFindName[0].ToString();
@@ -134,9 +134,8 @@ internal class Program
             data = Console.ReadLine();
             MatchCollection matchFindMail = regMail.Matches(data);
             mail = matchFindPhone[0].ToString();
-            string user_list = $"'{name}','{phone}','{mail}'"; // добавляем данные в лист
-          
-        } while (true);
-
+        Console.WriteLine("Выведем записанные данные");
+        Console.WriteLine ($"Записали данные{name}, {phone}, {mail}");
     }
+  
 }
