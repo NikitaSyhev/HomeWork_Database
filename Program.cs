@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace DbConnectionExample
 {
-   
+
     delegate void myDel(string _text); //delegate 
     public class myConnectToMSSQLDB  //класс для связи с БД
     {
@@ -103,7 +103,7 @@ internal class Program
         }
     }
 
-    
+
     static void Main(string[] args)
     {
         myDel putText; //делегат
@@ -117,25 +117,25 @@ internal class Program
         string name;
         string phone;
         string mail;
-        Regex regPhone = new Regex(@"^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$"); // создаем регексы
-        Regex regName = new Regex(@"^[a-zA-Z]+$");
-        Regex regMail = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+        Regex regPhone = new Regex(@"((\+7|8)\d{10})"); // создаем регексы
+        Regex regName = new Regex(@"((\s|^)[A-Z|a-z]+\D(\s|$))");
+        Regex regMail = new Regex(@"([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)");
+        
 
-        Console.WriteLine($"Введите имя: ");
-            data = Console.ReadLine();
-            MatchCollection matchFindName = regName.Matches(data);
-            name = matchFindName[0].ToString();
-
-            Console.WriteLine($"Введите телефон в формате +7(ХХХ)ХХХ-ХХ-ХХ :");
-            data = Console.ReadLine();
-            MatchCollection matchFindPhone = regPhone.Matches(data);
-            phone = matchFindPhone[0].ToString();
-            Console.WriteLine($"Введите электронную почту:");
-            data = Console.ReadLine();
-            MatchCollection matchFindMail = regMail.Matches(data);
-            mail = matchFindPhone[0].ToString();
+        Console.WriteLine($"Введите имя, введите телефон в формате +7ХХХХХХХХХХ и введите электронную почту через пробел ");
+        data = Console.ReadLine();
+        MatchCollection matchFindName = regName.Matches(data);
+        name = matchFindName[0].ToString();  
+        MatchCollection matchFindPhone = regPhone.Matches(data);
+        phone = matchFindPhone[0].ToString();
+      
+        MatchCollection matchFindMail = regMail.Matches(data);
+        mail = matchFindPhone[0].ToString();
         Console.WriteLine("Выведем записанные данные");
-        Console.WriteLine ($"Записали данные{name}, {phone}, {mail}");
+        Console.WriteLine($"Записали данные{name}, {phone}, {mail}");
+        string all_data = $"'{name}','{phone}','{mail}'";
+        putText.Invoke(all_data); // `Invoke` - это метод, который позволяет вызвать делегат 
+
     }
-  
+
 }
