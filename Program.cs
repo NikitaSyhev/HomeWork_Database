@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,16 +12,16 @@ using System.Threading;
 
 namespace DbConnectionExample
 {
-    public class User
+    public class userData // создали класс для записи данных пользователя
     {
-        public User(string name, string mail, string numberPhone) { _name = name; _mail = mail; _numberPhone = numberPhone; }
+        public userData(string name, string phoneNumber, string mail) { _name = name;  _numberPhone = phoneNumber; _mail = mail; }
         //создали конструктор класса
         public string _name { get; } // свойства геттер
         public string _mail { get; }// свойства геттер
         public string _numberPhone { get; }// свойства геттер
     }
     delegate void myDel(string _text); //delegate 
-    public class myConnectToMSSQLDB
+    public class myConnectToMSSQLDB  //класс для связи с БД
     {
         public SqlConnection connection;
         public myConnectToMSSQLDB()
@@ -37,7 +37,7 @@ namespace DbConnectionExample
             var myConn = new SqlConnection(conStr);
             try
             {
-                myConn.Open();
+                myConn.Open(); // открыли соединение с базоый данных
                 Console.WriteLine($"Установлено соединение с параметрами {conStr}");
             }
             catch
@@ -63,11 +63,12 @@ internal class Program
     {
         Console.WriteLine(_text);
     }
-    static void WriteToFile(string _text)
+    static void WriteToFile(string _text) // запись в файл
     {
-        string _name = "Users.txt";
+        string _name = "Data.txt";
         var sw = new StreamWriter(_name, true);
         sw.WriteLine(_text);
+
         sw.Close();
         //using (var sw01 = new StreamWriter(_name))
         //{
@@ -79,12 +80,12 @@ internal class Program
     {
         var connect = new myConnectToMSSQLDB();
         string _cmd = "USE users;\n";
-        _cmd += @"INSERT INTO [dateUs] ([name],[phone],[mail]) ";
+        _cmd += @"INSERT INTO [dateUs] ([name],[phone],[mail]) ";// 
         _cmd += @"VALUES (N";
         _cmd += _text;
         _cmd += ");";
 
-        /* Конструетор по умолчанию */
+        /* Конструктор по умолчанию */
         SqlCommand sqlCommand = new SqlCommand();
         sqlCommand.Connection = connect.connection;
         sqlCommand.CommandText = _cmd;
@@ -110,62 +111,41 @@ internal class Program
     }
     static void Main(string[] args)
     {
-        myDel putText;
+        myDel putText; //делегат
         putText = WriteToDB;
         putText += Print;
         putText += WriteToFile;
-        string exit = "end_input";
-        string input = "", name, phone, mail;
-        int nUser = 1;
-        List<User> users = new List<User>();
-        Regex rPhone = new Regex(@"((\+7|8)\d{10})");
-        Regex rName = new Regex(@"((\s|^)[A-Z|a-z]+\D(\s|$))");
-        Regex rMail = new Regex(@"([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)");
+
+
+        string data; // объявили 4 переменные, data для считывания введеных данных, осальные - для записи
+        string name;
+        string phone;
+        string mail;
+        List<userData> users = new List<userData>(); // создали лист users для записи данных
+        Regex regPhone = new Regex(@"^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$"); // создаем регексы
+        Regex regName = new Regex(@"^[a-zA-Z]+$");
+        Regex regMail = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
         do
         {
-            Console.Clear();
-            Console.WriteLine($"Введите имя ,номер телефона и mail пользователя №{nUser++} через пробел:");
-            input = Console.ReadLine();
-            if (input.ToLower() == exit) break;
-            MatchCollection matchFindName = rName.Matches(input);
-            try
-            {
-                name = matchFindName[0].ToString();
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Имя неуказанно");
-                name = @"<<none>>";
-            }
-            MatchCollection matchFindPhone = rPhone.Matches(input);
-            try
-            {
-                phone = matchFindPhone[0].ToString();
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Номер телефона неуказан или указан неверно");
-                phone = @"<<none>>";
-            }
-            MatchCollection matchFindMail = rMail.Matches(input);
-            try
-            {
-                mail = matchFindMail[0].ToString();
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("почта неуказана или указана неверно");
-                mail = @"<<none>>";
-            }
-            User user = new User(name, mail, phone);
+            Console.WriteLine($"Введите имя: ");
+            data = Console.ReadLine();
+            MatchCollection matchFindName = regName.Matches(data);
+            name = matchFindName[0].ToString();
+
+            Console.WriteLine($"Введите телефон в формате +7(ХХХ)ХХХ-ХХ-ХХ :");
+            data = Console.ReadLine();
+            MatchCollection matchFindPhone = regPhone.Matches(data);
+            phone = matchFindPhone[0].ToString();
+            Console.WriteLine($"Введите электронную почту:");
+            data = Console.ReadLine();
+            MatchCollection matchFindMail = regMail.Matches(data);
+            mail = matchFindPhone[0].ToString();
+            userData user = new userData(name, mail, phone); //создаем объект класса
             users.Add(user);
-            string user_list = $"'{name}','{phone}','{mail}'";
-            putText.Invoke(user_list);
-            Thread.Sleep(3000);
-        } while (input.ToLower() != exit);
-        for (int i = 0; i < users.Count; i++)
-        {
-            Console.WriteLine($"Пользователь: {users[i]._name}\t номер телефона: {users[i]._numberPhone}\t mail: {users[0]._mail}");
-        }
+            string user_list = $"'{name}','{phone}','{mail}'"; // добавляем данные в лист
+            putText.Invoke(user_list);// метод вызова делегата 
+          
+        } while (true);
+
     }
 }
